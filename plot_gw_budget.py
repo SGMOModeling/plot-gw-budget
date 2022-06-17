@@ -1,3 +1,5 @@
+import sys
+import os
 import matplotlib
 import numpy as np
 import pandas as pd
@@ -6,6 +8,25 @@ import matplotlib.pyplot as plt
 matplotlib.use('Agg')
 
 from pywfm import IWFMBudget
+
+def read_filename_from_commandline(args):
+    """ Read the budget hdf file name from the commandline
+    """
+    if len(args) == 1:
+        input("Provide name of budget HDF file: ")
+    
+    elif len(args) > 2:
+        raise ValueError("Too many values provided on command line")
+
+    else:
+        file_name = args[1]
+        if not os.path.exists(file_name):
+            raise FileNotFoundError("File provided {} was not found".format(file_name))
+        
+        if not file_name.endswith('hdf'):
+            raise ValueError("Budget files must be HDF format")
+
+        return file_name
 
 def date_to_water_year(month, year):
     if month > 9:
@@ -16,7 +37,7 @@ def date_to_water_year(month, year):
 if __name__ == '__main__':
 
 
-    gw_budget_file = 'Results/C2VSimFG_GW_Budget.hdf'
+    gw_budget_file = read_filename_from_commandline(sys.argv)
     
     with IWFMBudget(gw_budget_file) as bud:
         locations = bud.get_location_names()
@@ -178,7 +199,7 @@ if __name__ == '__main__':
                 'k'
             )
             
-            ax.set_xticks(gw.index, gw['Time'].dt.year)
+            ax.set_xticks(gw.index.tolist(), gw['Time'].dt.year.tolist())
             for label in ax.get_xticklabels():
                 label.set_rotation(90)
                 
