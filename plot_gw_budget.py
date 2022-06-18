@@ -42,6 +42,9 @@ if __name__ == '__main__':
     with IWFMBudget(gw_budget_file) as bud:
         locations = bud.get_location_names()
         for i, l in enumerate(locations, start=1):
+
+            print("Plotting Groundwater Budget for {}".format(l))
+
             gw = bud.get_values(
                 i,
                 output_interval='1YEAR',
@@ -216,3 +219,5 @@ if __name__ == '__main__':
             ax.set_title('Groundwater Budget\nfor Subregion {}'.format(i))
             plt.savefig('{}_GW.png'.format(l))
             plt.close()
+
+    print("Processing Complete!")
